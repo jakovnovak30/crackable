@@ -1,9 +1,12 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 import Text.HTML.Scalpel
 
-data Status = Status Naslov Crackanost
+data Status = Status { naslov :: String, crackanost :: String } deriving (Show)
 type Naslov = String
 type Crackanost = String
- 
+type Url = String
+
  -- provjeriStatus :: Trazimo -> Bool
  -- provjeriStatus searchFor
  --   | nadeno == "Cracked" = True
@@ -13,14 +16,16 @@ type Crackanost = String
 najdi :: String -> IO(Maybe [Status])
 najdi searchFor = scrapeURL url statusi
  where
-   url = buildUrl searchFor
+  url = buildUrl searchFor
 
-   statusi :: Scraper String [Status]
-   statusi = chroot ("div" @: [hasClass "elementor-post__badge"]) $ do texts "div"
-   statusi = do
-     crackanost <- chroots ("div" @: [hasClass "elementor-post__badge"]) $ texts "div"
-     naslov     <- chroots ("h3"  @: [hasClass "elementor-post__title"]) $ texts "a"
-     return $ Status naslov crackanost
+  statusi :: Scraper String [Status]
+  statusi = chroots ("div" @: [hasClass "elementor-post__card"]) status 
+
+  status :: Scraper String Status
+  status = do
+   crackanost <- chroot ("div" @: [hasClass "elementor-post__badge"]) $ text "div"
+   naslov     <- chroot ("h3"  @: [hasClass "elementor-post__title"]) $ text "a"
+   return $ Status naslov crackanost
 
 buildUrl :: String -> Url
 buildUrl searchFor =
