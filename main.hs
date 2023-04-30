@@ -1,18 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Text.HTML.Scalpel
+import qualified Data.Text as T
+import Data.Maybe
 
 data Status = Status { naslov :: String, crackanost :: String } deriving (Show)
 type Naslov = String
 type Crackanost = String
 type Url = String
 
- -- provjeriStatus :: Trazimo -> Bool
- -- provjeriStatus searchFor
- --   | nadeno == "Cracked" = True
- --   | otherwise           = False
- --   where nadeno = najdi searchFor
- 
+obradiRezultat :: Status -> String
+obradiRezultat (Status naslov crackanost)
+  | crackanost == "Uncracked" = trim naslov ++ " se ne da crackati, sjebali su te..."
+  | otherwise                 = trim naslov ++ " se da crackati, imas srece :)"
+
+obradaRezultata :: [Status] -> [String]
+obradaRezultata = map obradiRezultat
+
+trim :: String -> String
+trim = T.unpack . T.strip . T.pack
+
 najdi :: String -> IO(Maybe [Status])
 najdi searchFor = scrapeURL url statusi
  where
@@ -44,5 +51,11 @@ main :: IO()
 main = do
  putStrLn "Napisite ime igrice koju zelite crackati"
  searchFor <- getLine
- putStrLn "Work in progress"
- -- putStrLn $ poruka $ provjeriStatus searchFor
+ rezultati <- najdi searchFor
+ putStrLn "~~~~~~~~~~~~~~~~~~~~~~~~~~"
+ putStrLn "Rezultati pretrage:"
+ putStrLn "~~~~~~~~~~~~~~~~~~~~~~~~~~"
+ case rezultati of
+  Just [] -> putStrLn "Nema rezultata"
+  Nothing -> putStrLn "Dogodila se greska pri ucitavanju stranice"
+  Just rezultati -> mapM_ putStrLn $ obradaRezultata rezultati
