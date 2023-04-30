@@ -42,11 +42,6 @@ buildUrl searchFor =
        drugiDio = concatMap ("+" ++) $ tail  polje
        polje = words searchFor
 
-poruka :: Bool -> String
-poruka moguce
- | moguce    = "Igrica se da crackati"
- | otherwise = "EA te opet sjebal, kurve proklete"
-
 main :: IO()
 main = do
  putStrLn "Napisite ime igrice koju zelite crackati:"
