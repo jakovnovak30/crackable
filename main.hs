@@ -5,22 +5,22 @@ import qualified Data.Text as T
 import Data.Maybe
 
 data Status = Status { naslov :: String, crackanost :: String } deriving (Show)
-type Naslov = String
-type Crackanost = String
 type Url = String
+type Poruka = String
+type Upit = String
 
-obradiRezultat :: Status -> String
+obradiRezultat :: Status -> Poruka
 obradiRezultat (Status naslov crackanost)
   | crackanost == "Uncracked" = trim naslov ++ " se ne da crackati, sjebali su te..."
   | otherwise                 = trim naslov ++ " se da crackati, imas srece :)"
 
-obradaRezultata :: [Status] -> [String]
+obradaRezultata :: [Status] -> [Poruka]
 obradaRezultata = map obradiRezultat
 
 trim :: String -> String
 trim = T.unpack . T.strip . T.pack
 
-najdi :: String -> IO(Maybe [Status])
+najdi :: Upit -> IO(Maybe [Status])
 najdi searchFor = scrapeURL url statusi
  where
   url = buildUrl searchFor
@@ -34,7 +34,7 @@ najdi searchFor = scrapeURL url statusi
    naslov     <- chroot ("h3"  @: [hasClass "elementor-post__title"]) $ text "a"
    return $ Status naslov crackanost
 
-buildUrl :: String -> Url
+buildUrl :: Upit -> Url
 buildUrl searchFor =
  "https://cwwatch.net/?s=" ++ query
  where query = prviDio ++ drugiDio
@@ -51,6 +51,6 @@ main = do
  putStrLn "Rezultati pretrage:"
  putStrLn "~~~~~~~~~~~~~~~~~~~~~~~~~~"
  case rezultati of
-  Just [] -> putStrLn "Nema rezultata"
-  Nothing -> putStrLn "Dogodila se greska pri ucitavanju stranice"
+  Just []        -> putStrLn "Nema rezultata"
+  Nothing        -> putStrLn "Dogodila se greska pri ucitavanju stranice"
   Just rezultati -> mapM_ putStrLn $ obradaRezultata rezultati
