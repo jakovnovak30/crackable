@@ -39,7 +39,7 @@ buildUrl searchFor =
  "https://cwwatch.net/?s=" ++ query
  where query = prviDio ++ drugiDio
        prviDio = head polje
-       drugiDio = concat $ map ("+" ++) $ tail  polje
+       drugiDio = concatMap ("+" ++) $ tail  polje
        polje = words searchFor
 
 poruka :: Bool -> String
@@ -49,7 +49,7 @@ poruka moguce
 
 main :: IO()
 main = do
- putStrLn "Napisite ime igrice koju zelite crackati"
+ putStrLn "Napisite ime igrice koju zelite crackati:"
  searchFor <- getLine
  rezultati <- najdi searchFor
  putStrLn "~~~~~~~~~~~~~~~~~~~~~~~~~~"
