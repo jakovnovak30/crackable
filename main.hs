@@ -3,6 +3,7 @@
 import Text.HTML.Scalpel
 import qualified Data.Text as T
 import Data.Maybe
+import System.IO
 
 data Status = Status { naslov :: String, crackanost :: String } deriving (Show)
 type Url = String
@@ -44,7 +45,8 @@ buildUrl searchFor =
 
 main :: IO()
 main = do
- putStrLn "Napisite ime igrice koju zelite crackati:"
+ putStr "Napisite ime igrice koju zelite crackati: "
+ hFlush stdout
  searchFor <- getLine
  rezultati <- najdi searchFor
  putStrLn "~~~~~~~~~~~~~~~~~~~~~~~~~~"
